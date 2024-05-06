@@ -93,10 +93,6 @@ public class Main {
 
     static class RomanConverter {
 
-        // Массивы для хранения римских цифр и их значений
-        private static final String[] ROMAN_DIGITS = {"I", "IV", "V", "IX", "X", "XL", "L", "XC", "C"};
-        private static final int[] ROMAN_VALUES = {1, 4, 5, 9, 10, 40, 50, 90, 100};
-
         // Метод для преобразования римского числа в арабское
         public static int romanToArabic(String roman) {
             int result = 0;
