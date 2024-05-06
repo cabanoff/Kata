@@ -33,6 +33,8 @@ public class Main {
         String operator = parts[1]; // Исправлено на parts[1]
         String second = parts[2]; // Исправлено на parts[2]
 
+        System.out.println("Программа завершена.");
+
         int num1, num2;
         boolean isRoman = false;
 
@@ -49,6 +51,9 @@ public class Main {
                 throw new IllegalArgumentException("Неправильный формат чисел");
             }
         }
+
+        System.out.println(num1);
+        System.out.println(num2);
 
         // Проверка на диапазон чисел
         if ((num1 < 1 || num1 > 10) || (num2 < 1 || num2 > 10)) {
@@ -97,13 +102,25 @@ public class Main {
             int result = 0;
             int i = 0;
 
-            for (int j = 0; j < ROMAN_DIGITS.length; j++) {
-                while (roman.startsWith(ROMAN_DIGITS[j], i)) {
-                    result += ROMAN_VALUES[j];
-                    i += ROMAN_DIGITS[j].length();
-                }
+            // Проверка на недопустимые последовательности
+            if (roman.matches(".*IIII.*|.*VV.*|.*XXXX.*|.*LL.*|.*CCCC.*")) {
+                throw new IllegalArgumentException("Недопустимая последовательность римских цифр");
             }
 
+            while (i < roman.length()) {
+                // Получаем значение текущего римского символа
+                int value = getValue(roman.charAt(i));
+
+                // Если это не последний символ и значение следующего символа больше,
+                // значит это случай вычитания, например "IV"
+                if (i + 1 < roman.length() && getValue(roman.charAt(i + 1)) > value) {
+                    result += getValue(roman.charAt(i + 1)) - value;
+                    i += 2; // Переходим через оба символа
+                } else {
+                    result += value;
+                    i++;
+                }
+            }
             return result;
         }
 
@@ -114,18 +131,32 @@ public class Main {
             }
 
             StringBuilder roman = new StringBuilder();
+            int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+            String[] symbols = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
 
-            int i = ROMAN_VALUES.length - 1;
-            while (arabic > 0) {
-                if (arabic >= ROMAN_VALUES[i]) {
-                    roman.append(ROMAN_DIGITS[i]);
-                    arabic -= ROMAN_VALUES[i];
-                } else {
-                    i--;
+            for (int i = 0; i < values.length; i++) {
+                while (arabic >= values[i]) {
+                    arabic -= values[i];
+                    roman.append(symbols[i]);
                 }
             }
 
             return roman.toString();
+        }
+
+
+        // Вспомогательный метод для получения значения римского символа
+        private static int getValue(char r) {
+            switch (r) {
+                case 'I': return 1;
+                case 'V': return 5;
+                case 'X': return 10;
+                case 'L': return 50;
+                case 'C': return 100;
+                case 'D': return 500;
+                case 'M': return 1000;
+                default: throw new IllegalArgumentException("Недопустимый римский символ");
+            }
         }
     }
 
